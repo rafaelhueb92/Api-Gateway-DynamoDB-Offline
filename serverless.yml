@@ -1,0 +1,72 @@
+service: offline
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: python2.7
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    port: 4000
+  dynamodb:
+  # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    # Uncomment only if you already have a DynamoDB running locally
+    # noStart: true
+
+functions:
+  hello:
+    handler: handler.hello
+    memorySize: 128
+    description: Give a Hello World message 
+    events:
+      - http: 
+          path: /
+          method: get 
+  put_user:
+    handler: handler.put_user
+    memorySize: 128
+    description: Include a new user.
+    events:
+      - http: 
+          path: user
+          method: post
+  list_user:
+    handler: handler.list_user
+    memorySize: 128
+    description: List all users
+    events:
+      - http: 
+          path: user
+          method: get  
+
+  
+
+resources: # CloudFormation template syntax
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          -  AttributeName: id
+             AttributeType: S  
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
