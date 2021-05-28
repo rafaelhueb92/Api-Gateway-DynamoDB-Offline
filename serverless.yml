@@ -28,14 +28,6 @@ custom:
     # noStart: true
 
 functions:
-  hello:
-    handler: handler.hello
-    memorySize: 128
-    description: Give a Hello World message 
-    events:
-      - http: 
-          path: /
-          method: get 
   put_user:
     handler: handler.put_user
     memorySize: 128
