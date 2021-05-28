@@ -2,6 +2,10 @@ import json
 import boto3
 import uuid
 
+dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
+
+table = dynamodb.Table('usersTable')
+
 def hello(event, context):
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
@@ -21,9 +25,6 @@ def put_user(event,context):
 
     Id = str(uuid.uuid1())
 
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
-
-    table = dynamodb.Table('usersTable')
     response = table.put_item(
        Item={
             'id': Id,
@@ -37,9 +38,7 @@ def put_user(event,context):
     } 
 
 def list_user(event,context):
-    dynamodb = boto3.resource('dynamodb', endpoint_url="http://localhost:8000")
 
-    table = dynamodb.Table('usersTable')
     response = table.scan()
 
     return  {
